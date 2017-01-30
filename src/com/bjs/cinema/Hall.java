@@ -60,8 +60,29 @@ public class Hall {
         System.out.println();
     }
 
+    public boolean IsHallFilled() {
+        return getOccupiedSeatsNumber() == seatsArray.length + seatsArray[0].length;
+    }
+
+    public int getOccupiedSeatsNumber() {
+        int result = 0;
+        for (int i = 0; i < seatsArray.length; ++i) {
+            for (int j = 0; j < seatsArray[i].length; ++j) {
+                if (seatsArray[i][j] != null) {
+                    ++result;
+                }
+            }
+        }
+
+        return result;
+    }
+
     public boolean IsOccupied(Seat seat) {
-        return seatsArray[seat.getLine()][seat.getSeat()] != null;
+        return IsOccupied(seat.getLine(), seat.getSeat());
+    }
+
+    public boolean IsOccupied(int line, int seat) {
+        return seatsArray[line][seat] != null;
     }
 
     public Movie getMovie() {
