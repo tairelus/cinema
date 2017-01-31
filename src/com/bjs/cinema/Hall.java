@@ -11,6 +11,8 @@ public class Hall {
     Seat[][] seatsArray;
     /**Movie shown in this hall*/
     Movie movie;
+    /**Current price*/
+    int price;
 
     public Hall(int id, Movie movie, int lines, int seats) {
         this.id = id;
@@ -21,15 +23,9 @@ public class Hall {
     /**
      * Occupy seat in the current hall
      * @param seat
-     * @return True if seat was free and occupied successfully, otherwise returns false
      */
-    public boolean occupySeat(Seat seat) {
-        if (IsOccupied(seat)) {
-            return false;
-        }
-
-        seatsArray[seat.getLine()][seat.getSeat()] = seat;
-        return true;
+    public void occupySeat(Seat seat) {
+        seatsArray[seat.getLine() - 1][seat.getSeat() - 1] = seat;
     }
 
     /**
@@ -77,12 +73,8 @@ public class Hall {
         return result;
     }
 
-    public boolean IsOccupied(Seat seat) {
-        return IsOccupied(seat.getLine(), seat.getSeat());
-    }
-
     public boolean IsOccupied(int line, int seat) {
-        return seatsArray[line][seat] != null;
+        return seatsArray[line - 1][seat - 1] != null;
     }
 
     public Movie getMovie() {
@@ -99,5 +91,13 @@ public class Hall {
 
     public int getSeatsNumber() {
         return seatsArray[0].length;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

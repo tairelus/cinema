@@ -15,10 +15,10 @@ public class Ticket {
     /**Ticket price in cents*/
     private int price;
 
-    public Ticket(Hall hall, Seat seat, int price) {
+    public Ticket(Hall hall, Seat seat) {
         this.hall = hall;
         this.seat = seat;
-        this.price = price;
+        this.price = hall.getPrice();
         this.ticketId =  Integer.toString(hashCode());
     }
 

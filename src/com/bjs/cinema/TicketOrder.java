@@ -1,5 +1,6 @@
 package com.bjs.cinema;
 
+import com.bjs.TerminateException;
 import com.bjs.visitor.Visitor;
 
 /**
@@ -11,14 +12,19 @@ public interface TicketOrder {
      * Select movie/hall
      * @return
      */
-    Hall selectHall(Visitor visitor);
+    Hall selectHall() throws TerminateException;
 
     /**
      * Select seat in the hall
      * @param hall
      * @return
      */
-    Seat selectSeat(Hall hall);
+    Seat selectSeat(Hall hall) throws TerminateException;
 
-
+    /**
+     * Gets ticket for the current visitor
+     * @param visitor Current visitor
+     * @return Ticket object
+     */
+    Ticket getTicket(Visitor visitor) throws TerminateException;
 }

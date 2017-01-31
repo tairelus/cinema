@@ -1,8 +1,6 @@
 package com.bjs;
 
 import com.bjs.cinema.Cinema;
-import com.bjs.cinema.Hall;
-import com.bjs.cinema.Seat;
 import com.bjs.cinema.Ticket;
 import com.bjs.visitor.Visitor;
 
@@ -12,49 +10,37 @@ import java.io.InputStreamReader;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Type '" + Cinema.QUIT_CODE + "' to terminate program.");
-
+        System.out.println("Type '" + Cinema.QUIT_CODE + "' to terminate program.\n");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        Visitor visitor = getVisitor(reader);
-        if (visitor == null) {
-            return;
-        }
 
-        Cinema cinema = new Cinema("Butterfly Country", reader);
-        Hall hall = cinema.selectHall(visitor);
-        if (hall == null) {
-            return;
-        }
+        try {
+            Cinema cinema = new Cinema("Butterfly Country", reader);
 
-        Seat seat = cinema.selectSeat(hall);
-        if (seat == null) {
-            return;
+            System.out.println("Enter number of visitors:");
+            int visitorsNum = Cinema.getIntegerValue(reader);
+
+            for (int i = 0; i < visitorsNum; ++i) {
+                Visitor visitor = getVisitor(reader);
+                Ticket ticket = cinema.getTicket(visitor);
+
+                if (ticket == null) {
+                    System.out.println("Your order canceled. Visit us next time!");
+                } else {
+                    visitor.setTicket(ticket);
+                    System.out.println("Have a nice view! :-)\n");
+                }
+            }
+        } catch (TerminateException e) {
+            System.out.println(e);
         }
     }
 
     /**
      * Create and store current visitor
      */
-    public static Visitor getVisitor(BufferedReader reader) {
+    public static Visitor getVisitor(BufferedReader reader) throws TerminateException {
         System.out.println("Hello! Please, enter your age:");
         int retVal = Cinema.getIntegerValue(reader);
-        if (retVal == -1) {
-            return null;
-        }
-
         return new Visitor(retVal);
     }
-
-    /*public static Ticket getTicket(Visitor visitor, Hall hall, Seat seat, int price) {
-        if (!visitor.checkAge(hall.getMovie())) {
-            System.out.println("Your age does not correspond to the movie restriction. Select another movie/hall");
-            return null;
-        }
-
-        System.out.println("Ticket order completed successfully. Have a nice view :-)!");
-        visitor.setTicket(new Ticket(hall, seat, price));
-        return visitor.getTicket();
-    }*/
-
-
 }

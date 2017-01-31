@@ -1,8 +1,10 @@
 package com.bjs.cinema;
 
+import com.bjs.TerminateException;
 import com.bjs.visitor.Visitor;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -12,6 +14,7 @@ import java.util.GregorianCalendar;
 public class Cinema implements TicketOrder {
     /**Value to quit program*/
     public static final String QUIT_CODE = "quit";
+    private static final String YES_CODE = "yes";
 
     /**Cinema name*/
     private String name;
@@ -33,20 +36,30 @@ public class Cinema implements TicketOrder {
 
         Movie movie = new Movie("Assassin's Creed", "USA, UK, France, Hong Kong", MovieType.THREE_DIMENSIONAL,
                 new GregorianCalendar(2016, 12, 14), 16);
-        addHall(new Hall(1, movie, 14, 22));
+        Hall hall = new Hall(1, movie, 14, 22);
+        hall.setPrice(1000);
+        addHall(hall);
 
         movie = new Movie("xXx: The Return of Xander Cage", "USA", MovieType.THREE_DIMENSIONAL,
                 new GregorianCalendar(2017, 01, 5), 16);
-        addHall(new Hall(2, movie, 14, 22));
+        hall = new Hall(2, movie, 14, 22);
+        hall.setPrice(900);
+        addHall(hall);
 
         movie = new Movie("Moana", "USA", MovieType.THREE_DIMENSIONAL, new GregorianCalendar(2016, 12, 14), 6);
-        addHall(new Hall(3, movie, 15, 23));
+        hall = new Hall(3, movie, 15, 23);
+        hall.setPrice(600);
+        addHall(hall);
 
         movie = new Movie("Live by Night", "USA", MovieType.TWO_DIMENSIONAL, new GregorianCalendar(2016, 12, 13), 18);
-        addHall(new Hall(4, movie, 15, 23));
+        hall = new Hall(4, movie, 15, 23);
+        hall.setPrice(800);
+        addHall(hall);
 
         movie = new Movie("La La Land", "USA", MovieType.TWO_DIMENSIONAL, new GregorianCalendar(2016, 8, 31), 16);
-        addHall(new Hall(5, movie, 15, 20));
+        hall = new Hall(5, movie, 15, 20);
+        hall.setPrice(1000);
+        addHall(hall);
 
         this.reader = reader;
     }
@@ -55,17 +68,12 @@ public class Cinema implements TicketOrder {
      * Helper. Provides reading positive integer
      * @return Valid integer value from keyboard or -1 to quit
      */
-    public static int getIntegerValue (BufferedReader reader) {
+    public static int getIntegerValue(BufferedReader reader) throws TerminateException {
         int result = -1;
-
         try {
-            String value = reader.readLine();
-            if (value.equals(QUIT_CODE)) {
-                System.out.println("Program terminated, bye!");
-                return result;
-            }
-
-            result = Integer.parseInt(value);
+            result = Integer.parseInt(getStringValue(reader));
+        } catch (TerminateException e) {
+            throw e; //Pass terminate exception to the upper level
         } catch (Exception e) { //Base exception class to cover all cases
             System.out.println("Entered value is invalid. Error: " + e.getMessage());
         }
@@ -79,10 +87,61 @@ public class Cinema implements TicketOrder {
     }
 
     /**
+     * Helper. Provides reading string from keyboard
+     * @return Input string
+     */
+    public static String getStringValue(BufferedReader reader) throws TerminateException {
+        String result = null;
+
+        try {
+            result = reader.readLine();
+            if (result.equals(QUIT_CODE)) {
+                throw new TerminateException("Program terminated, bye!");
+            }
+        } catch (IOException e) {
+            System.out.println("Input error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
+     * Gets ticket for the current visitor
+     * @param visitor Current visitor
+     * @return Ticket object
+     */
+    public Ticket getTicket(Visitor visitor) throws TerminateException {
+        Hall hall = selectHall();
+        if (hall.IsHallFilled()) {
+            System.out.println("Hall '" + hall.getId() + "' is filled. Please, select another movie/hall.\n");
+            return getTicket(visitor);
+        }
+
+        int ageRestriction = hall.getMovie().getAgeRestriction();
+        int visitorAge = visitor.getAge();
+        if (visitorAge < ageRestriction) {
+            System.out.println("Selected movie/hall has age restriction " + ageRestriction + " years old.");
+            System.out.println("Your age is " + visitorAge + ". Please, select another movie/hall.\n");
+            return getTicket(visitor);
+        }
+
+        Seat seat = selectSeat(hall);
+
+        System.out.println("Please, type '" + YES_CODE + "' to confirm order or any characters to reject.");
+        String value = getStringValue(reader);
+        if (value.equals(YES_CODE)) {
+            hall.occupySeat(seat);
+            return new Ticket(hall, seat);
+        }
+
+        return null;
+    }
+
+    /**
      * Select movie/hall
      * @return
      */
-    public Hall selectHall(Visitor visitor) {
+    public Hall selectHall() throws TerminateException {
         printMovieInfo();
 
         System.out.println("Please, chose movie/hall and enter hall id:");
@@ -95,15 +154,6 @@ public class Cinema implements TicketOrder {
             result = getHall(id);
         }
 
-        int ageRestriction = result.getMovie().getAgeRestriction();
-        int visitorAge = visitor.getAge();
-        if (visitorAge < ageRestriction) {
-            System.out.println("Selected movie/hall has age restriction " + ageRestriction + " years old.");
-            System.out.println("Your age is " + visitorAge + ". Please, select another movie/hall.\n");
-
-            return selectHall(visitor);
-        }
-
         return result;
     }
 
@@ -112,14 +162,8 @@ public class Cinema implements TicketOrder {
      * @param hall
      * @return
      */
-    public Seat selectSeat(Hall hall) {
+    public Seat selectSeat(Hall hall) throws TerminateException {
         hall.printSeats();
-
-        if (hall.IsHallFilled()) {
-            System.out.println("Hall '" + hall.getId() + "' is filled.");
-            return null;
-        }
-
         System.out.println("Please, select desired seat in the '" + hall.getId() + "' hall");
 
         System.out.println("Enter line number:");
