@@ -7,7 +7,7 @@ import com.bjs.visitor.Visitor;
  * Created by U-1 on 30.01.2017.
  * Describes actions required to solve ticket.
  */
-public interface TicketOrder {
+public interface OrderInterface {
     /**
      * Select movie/hall
      * @return
@@ -24,7 +24,7 @@ public interface TicketOrder {
     /**
      * Gets ticket for the current visitor
      * @param visitor Current visitor
-     * @return Ticket object
+     * @return Order object
      */
-    Ticket getTicket(Visitor visitor) throws TerminateException;
+    Order getTicket(Visitor visitor) throws TerminateException;
 }

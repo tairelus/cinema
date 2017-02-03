@@ -1,7 +1,7 @@
 package com.bjs.visitor;
 
 import com.bjs.cinema.Movie;
-import com.bjs.cinema.Ticket;
+import com.bjs.cinema.Order;
 
 /**
  * Created by U-1 on 24.01.2017.
@@ -15,8 +15,6 @@ public class Visitor {
     private int age;
     /**Visitor's identity card*/
     private String idCard;
-    /**Tickets bought by visitor*/
-    private Ticket ticket;
 
     /**
      * Use this version while personal visit
@@ -45,14 +43,6 @@ public class Visitor {
      */
     public boolean checkAge(Movie movie) {
         return age >= movie.getAgeRestriction();
-    }
-
-    public Ticket getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(Ticket ticket) {
-        this.ticket = ticket;
     }
 
     public String getFirstName() {

@@ -11,7 +11,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by U-1 on 24.01.2017.
  */
-public class Cinema implements TicketOrder {
+public class Cinema implements OrderInterface {
     /**Value to quit program*/
     public static final String QUIT_CODE = "quit";
     private static final String YES_CODE = "yes";
@@ -108,9 +108,9 @@ public class Cinema implements TicketOrder {
     /**
      * Gets ticket for the current visitor
      * @param visitor Current visitor
-     * @return Ticket object
+     * @return Order object
      */
-    public Ticket getTicket(Visitor visitor) throws TerminateException {
+    public Order getTicket(Visitor visitor) throws TerminateException {
         Hall hall = selectHall();
         if (hall.IsHallFilled()) {
             System.out.println("Hall '" + hall.getId() + "' is filled. Please, select another movie/hall.\n");
@@ -131,7 +131,7 @@ public class Cinema implements TicketOrder {
         String value = getStringValue(reader);
         if (value.equals(YES_CODE)) {
             hall.occupySeat(seat);
-            return new Ticket(hall, seat);
+            return new Order(hall, seat);
         }
 
         return null;

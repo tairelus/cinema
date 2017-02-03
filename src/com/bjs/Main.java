@@ -1,7 +1,7 @@
 package com.bjs;
 
 import com.bjs.cinema.Cinema;
-import com.bjs.cinema.Ticket;
+import com.bjs.cinema.Order;
 import com.bjs.visitor.Visitor;
 
 import java.io.BufferedReader;
@@ -21,12 +21,12 @@ public class Main {
 
             for (int i = 0; i < visitorsNum; ++i) {
                 Visitor visitor = getVisitor(reader);
-                Ticket ticket = cinema.getTicket(visitor);
+                Order order = cinema.getTicket(visitor);
 
-                if (ticket == null) {
+                if (order == null) {
                     System.out.println("Your order canceled. Visit us next time!");
                 } else {
-                    visitor.setTicket(ticket);
+                    order.setVisitor(visitor);
                     System.out.println("Have a nice view! :-)\n");
                 }
             }
