@@ -19,8 +19,6 @@ public class Cinema implements OrderInterface {
     private String name;
     /**Array of the cinema halls*/
     private ArrayList<Hall> halls;
-    /**Information about current visitor*/
-    private Visitor visitor;
     /**Reader object to read input from keyboard*/
     BufferedReader reader;
 

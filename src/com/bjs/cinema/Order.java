@@ -15,7 +15,7 @@ public class Order {
     private String orderId;
     /**Order price in cents*/
     private int price;
-    /**Reference to visitor*/
+    /**Information about current visitor*/
     private Visitor visitor;
 
     public Order(Hall hall, Seat seat) {
