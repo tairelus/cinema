@@ -26,5 +26,5 @@ public interface OrderInterface {
      * @param visitor Current visitor
      * @return Order object
      */
-    Order getTicket(Visitor visitor) throws TerminateException;
+    Order getOrder(Visitor visitor) throws TerminateException;
 }

@@ -21,7 +21,7 @@ public class Main {
 
             for (int i = 0; i < visitorsNum; ++i) {
                 Visitor visitor = getVisitor(reader);
-                Order order = cinema.getTicket(visitor);
+                Order order = cinema.getOrder(visitor);
 
                 if (order == null) {
                     System.out.println("Your order canceled. Visit us next time!");

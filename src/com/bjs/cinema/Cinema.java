@@ -14,7 +14,6 @@ import java.util.GregorianCalendar;
 public class Cinema implements OrderInterface {
     /**Value to quit program*/
     public static final String QUIT_CODE = "quit";
-    private static final String YES_CODE = "yes";
 
     /**Cinema name*/
     private String name;
@@ -110,11 +109,11 @@ public class Cinema implements OrderInterface {
      * @param visitor Current visitor
      * @return Order object
      */
-    public Order getTicket(Visitor visitor) throws TerminateException {
+    public Order getOrder(Visitor visitor) throws TerminateException {
         Hall hall = selectHall();
         if (hall.IsHallFilled()) {
             System.out.println("Hall '" + hall.getId() + "' is filled. Please, select another movie/hall.\n");
-            return getTicket(visitor);
+            return getOrder(visitor);
         }
 
         int ageRestriction = hall.getMovie().getAgeRestriction();
@@ -122,14 +121,12 @@ public class Cinema implements OrderInterface {
         if (visitorAge < ageRestriction) {
             System.out.println("Selected movie/hall has age restriction " + ageRestriction + " years old.");
             System.out.println("Your age is " + visitorAge + ". Please, select another movie/hall.\n");
-            return getTicket(visitor);
+            return getOrder(visitor);
         }
 
         Seat seat = selectSeat(hall);
 
-        System.out.println("Please, type '" + YES_CODE + "' to confirm order or any characters to reject.");
-        String value = getStringValue(reader);
-        if (value.equals(YES_CODE)) {
+        if (confirmOrder()) {
             hall.occupySeat(seat);
             return new Order(hall, seat);
         }
@@ -202,6 +199,26 @@ public class Cinema implements OrderInterface {
         }
 
         return null;
+    }
+
+    /**
+     * Asks for order confirmation
+     */
+    private boolean confirmOrder() throws TerminateException {
+        final String YES_CODE = "yes";
+        final String NO_CODE = "no";
+
+        System.out.println("Please, type '" + YES_CODE + "' to confirm order or '" + NO_CODE  + "' to reject.");
+        String value = getStringValue(reader);
+        if (value.equals(YES_CODE)) {
+            return true;
+        } else if (value.equals(NO_CODE)) {
+            return  false;
+        } else {
+            confirmOrder();
+        }
+
+        return false;
     }
 
     /**
